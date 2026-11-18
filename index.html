@@ -19,6 +19,8 @@ h1{font-size:34px;margin:6px 0 0;letter-spacing:.02em}
 .tabs button,.s{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;font:inherit;font-size:14px}
 .tabs button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 input[type=text],input[type=number]{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
+select{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
+.link{background:none;border:0;color:var(--mu);text-decoration:underline;font:inherit;font-size:14px;padding:10px 0;cursor:pointer}
 h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 .chip{display:flex;justify-content:space-between;width:100%;padding:13px 14px;margin:0 0 5px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;font:inherit;text-align:left}
 .chip.sel,.chip.d1{border-color:var(--ko);box-shadow:inset 4px 0 0 var(--ko)}
@@ -41,6 +43,10 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button></div>
 <section id="bet">
   <input type="text" id="name" placeholder="Tu nombre" maxlength="24" autocomplete="off">
+  <div id="claimBox" class="hide">
+    <button class="link" id="claimLink" type="button">Ya aposté antes: elegir mi nombre de la lista</button>
+    <div id="claimSel" class="hide"><select id="claimList"></select></div>
+  </div>
   <div id="closed" class="msg hide">Apuestas cerradas.</div>
   <div id="list"></div>
   <div class="bar" id="count"></div>
@@ -79,7 +85,24 @@ function bet(){
   $("#count").textContent=mine.size+" marcados como muertos"+(myName.trim()?"":" · escribe tu nombre para guardar");
   document.querySelectorAll("#list .chip").forEach(b=>b.onclick=()=>{const c=b.dataset.c;mine.has(c)?mine.delete(c):mine.add(c);bet();save()});
 }
-function save(){clearTimeout(timer);timer=setTimeout(async()=>{if(!myName.trim()||cfg.closed)return;const{error}=await sb.from("picks").upsert({user_id:uid,name:myName.trim(),picks:[...mine],updated_at:new Date().toISOString()});if(error)fail("No se pudo guardar: "+error.message)},500)}
+function save(){clearTimeout(timer);timer=setTimeout(async()=>{if(!myName.trim()||cfg.closed)return;const{error}=await sb.from("picks").upsert({user_id:uid,name:myName.trim(),picks:[...mine],updated_at:new Date().toISOString()});if(error){if(error.code==="23505"){fail("Ese nombre ya existe. Si eres tú, elígelo en «Ya aposté antes».");$("#claimSel").classList.remove("hide");loadPartis()}else fail("No se pudo guardar: "+error.message)}else{$("#err").classList.add("hide");$("#count").textContent=mine.size+" marcados como muertos · ✓ guardado"}},500)}
+async function loadPartis(){
+  const{data}=await sb.rpc("participantes"),n=(data||[]).map(p=>p.name);
+  $("#claimList").innerHTML='<option value="">— Elige tu nombre —</option>'+n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+"</option>").join("");
+  $("#claimBox").classList.toggle("hide",cfg.closed||!n.length);
+}
+async function claim(name){
+  if(!name)return;
+  if(!confirm("¿Eres "+name+"? Pasarás a editar su apuesta desde este navegador.")){$("#claimList").value="";return}
+  clearTimeout(timer);
+  const{error}=await sb.rpc("reclamar",{p_name:name});
+  if(error)return fail("No se pudo recuperar: "+error.message);
+  const{data}=await sb.from("picks").select("*").eq("user_id",uid).maybeSingle();
+  if(data){myName=data.name;$("#name").value=myName;mine=new Set(data.picks)}
+  $("#err").classList.add("hide");$("#claimSel").classList.add("hide");bet();loadPartis();
+}
+$("#claimLink").onclick=()=>{$("#claimSel").classList.toggle("hide");loadPartis()};
+$("#claimList").onchange=e=>claim(e.target.value);
 function score(p){const A=new Set(cfg.absent),D=new Set(cfg.dead.filter(x=>!A.has(x))),pk=p.picks.filter(x=>!A.has(x)),h=pk.filter(x=>D.has(x)).length,f=pk.length-h,n=ALL.filter(x=>!A.has(x)).length;return{h,f,pts:h*cfg.a-f*cfg.b-(D.size-h)*cfg.c+(n-D.size-f)*cfg.d}}
 async function rank(){
   await loadCfg();
@@ -115,7 +138,7 @@ $("#name").oninput=e=>{myName=e.target.value;bet();save()};
     uid=session.user.id;await loadCfg();
     const{data}=await sb.from("picks").select("*").eq("user_id",uid).maybeSingle();
     if(data){myName=data.name;$("#name").value=myName;mine=new Set(data.picks)}
-    bet();
+    bet();loadPartis();
   }catch(e){fail("No se pudo conectar: "+(e.message||e))}
 })();
 </script>
