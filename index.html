@@ -20,8 +20,10 @@ h1{font-size:34px;margin:6px 0 0;letter-spacing:.02em}
 .tabs button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 input[type=text],input[type=number]{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
 select{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
-#who{margin-bottom:8px}
-.link{background:none;border:0;color:var(--mu);text-decoration:underline;font:inherit;font-size:14px;padding:10px 0;cursor:pointer}
+.big{display:block;width:100%;padding:16px;margin:0 0 8px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;font:inherit;font-weight:600;text-align:left;cursor:pointer}
+.big.go{background:var(--tx);color:var(--bg);border-color:var(--tx);text-align:center}
+#newBox,#oldBox{margin:0 0 12px}
+#newBox input{margin-bottom:8px}
 h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 .chip{display:flex;justify-content:space-between;width:100%;padding:13px 14px;margin:0 0 5px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;font:inherit;text-align:left}
 .chip.sel,.chip.d1{border-color:var(--ko);box-shadow:inset 4px 0 0 var(--ko)}
@@ -43,15 +45,23 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <div id="err" class="msg hide" style="border-color:var(--ko)"></div>
 <div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button></div>
 <section id="bet">
-  <div id="who" class="hide"><select id="whoSel" aria-label="Quién apuesta"></select></div>
-  <input type="text" id="name" placeholder="Tu nombre" maxlength="24" autocomplete="off">
-  <div id="claimBox" class="hide">
-    <button class="link" id="claimLink" type="button">Ya aposté antes: elegir mi nombre de la lista</button>
-    <div id="claimSel" class="hide"><select id="claimList"></select></div>
+  <div id="home">
+    <div id="closed" class="msg hide">Apuestas cerradas. Mira el Ranking para ver los resultados.</div>
+    <div id="homeBtns">
+      <button class="big" id="btnNew">Añadir participante</button>
+      <div id="newBox" class="hide">
+        <input type="text" id="name" placeholder="Tu nombre" maxlength="24" autocomplete="off">
+        <button class="big go" id="btnGo">Empezar a votar</button>
+      </div>
+      <button class="big" id="btnOld">Ya participo: editar mi voto</button>
+      <div id="oldBox" class="hide"><select id="claimList"></select></div>
+    </div>
   </div>
-  <div id="closed" class="msg hide">Apuestas cerradas.</div>
-  <div id="list"></div>
-  <div class="bar" id="count"></div>
+  <div id="vote" class="hide">
+    <div class="card row"><span>Votando como <b id="who"></b></span><button class="s" id="btnSwitch">Cambiar</button></div>
+    <div id="list"></div>
+    <div class="bar" id="count"></div>
+  </div>
 </section>
 <section id="rank" class="hide"></section>
 <section id="adm" class="hide"></section>
@@ -79,78 +89,83 @@ let uid,cfg={closed:false,dead:[],absent:[],a:5,b:2,c:1,d:1},mine=new Set(),myNa
 function fail(m){const e=$("#err");e.textContent=m;e.classList.remove("hide")}
 function tab(t){["bet","rank","adm"].forEach(x=>$("#"+x).classList.toggle("hide",x!==t));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));if(t==="rank")rank()}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.t));
+function show(v){$("#home").classList.toggle("hide",v!=="home");$("#vote").classList.toggle("hide",v!=="vote")}
 function bet(){
-  $("#closed").classList.toggle("hide",!cfg.closed);
   let h="";
   for(const[g,a]of Object.entries(GRUPOS)){h+="<h2>"+esc(g)+"</h2>";for(const c of a){const s=mine.has(c);h+='<button class="chip'+(s?" sel":"")+'" data-c="'+esc(c)+'"'+(cfg.closed?" disabled":"")+"><span>"+esc(c)+"</span><small>"+(s?"Muere":"")+"</small></button>"}}
   $("#list").innerHTML=h;
-  $("#count").textContent=mine.size+" marcados como muertos"+(myName.trim()?"":" · escribe tu nombre para guardar");
+  $("#count").textContent=mine.size+" marcados como muertos"+(cfg.closed?" · apuestas cerradas":"");
   document.querySelectorAll("#list .chip").forEach(b=>b.onclick=()=>{const c=b.dataset.c;mine.has(c)?mine.delete(c):mine.add(c);bet();save()});
 }
-function renderWho(){
-  $("#who").classList.toggle("hide",!people.length);
-  $("#whoSel").innerHTML=people.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+"</option>").join("")+'<option value="new">➕ Añadir otra persona</option>';
-  $("#whoSel").value=cur||"new";
-}
-function pick(id){
-  const p=people.find(x=>x.id===id);
-  cur=p?p.id:null;myName=p?p.name:"";mine=new Set(p?p.picks:[]);
-  $("#name").value=myName;renderWho();bet();
-  try{localStorage.setItem("porra_cur",cur||"")}catch(e){}
-}
-async function loadMine(selName){
+async function loadMine(){
   const{data,error}=await sb.from("picks").select("*").eq("user_id",uid).order("updated_at");
   if(error)return fail(error.message);
   people=data||[];
-  let p=selName&&people.find(x=>x.name.toLowerCase()===selName.toLowerCase());
-  if(!p){let last="";try{last=localStorage.getItem("porra_cur")||""}catch(e){}p=people.find(x=>x.id===last)||people[0]}
-  pick(p?p.id:null);
 }
 function save(){dirty=true;clearTimeout(timer);timer=setTimeout(doSave,500)}
 async function doSave(){
   if(busy){timer=setTimeout(doSave,300);return}
-  if(!dirty||!myName.trim()||cfg.closed)return;
+  if(!dirty||!cur||cfg.closed)return;
   busy=true;dirty=false;
   try{
-    const row={name:myName.trim(),picks:[...mine],updated_at:new Date().toISOString()};
-    const r=cur?await sb.from("picks").update(row).eq("id",cur).select().single()
-               :await sb.from("picks").insert({...row,user_id:uid}).select().single();
-    if(r.error){
-      dirty=true;
-      if(r.error.code==="23505"){fail("Ese nombre ya existe. Si eres tú, elígelo en «Ya aposté antes».");$("#claimSel").classList.remove("hide");loadPartis()}
-      else fail("No se pudo guardar: "+r.error.message);
-      return;
-    }
-    const d=r.data,i=people.findIndex(x=>x.id===d.id);
-    if(i<0)people.push(d);else people[i]=d;
-    cur=d.id;renderWho();
+    const{data,error}=await sb.from("picks").update({picks:[...mine],updated_at:new Date().toISOString()}).eq("id",cur).select().single();
+    if(error){dirty=true;await loadCfg();if(cfg.closed)bet();return fail(cfg.closed?"Las apuestas se acaban de cerrar: tu último cambio no se guardó.":"No se pudo guardar: "+error.message)}
+    const i=people.findIndex(x=>x.id===data.id);if(i>=0)people[i]=data;
     $("#err").classList.add("hide");
     $("#count").textContent=mine.size+" marcados como muertos · ✓ guardado";
   }finally{busy=false}
 }
 async function flush(){clearTimeout(timer);while(busy)await new Promise(r=>setTimeout(r,100));await doSave()}
-async function loadPartis(){
-  const{data}=await sb.rpc("participantes");
-  const mios=new Set(people.map(p=>p.name.toLowerCase())),n=(data||[]).map(p=>p.name).filter(x=>!mios.has(x.toLowerCase()));
-  $("#claimList").innerHTML='<option value="">— Elige tu nombre —</option>'+n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+"</option>").join("");
-  $("#claimBox").classList.toggle("hide",cfg.closed||!n.length);
+/* ---- Pantalla de inicio ---- */
+async function goHome(){
+  await flush();
+  if(dirty&&!confirm("No se pudo guardar tu último cambio. ¿Salir igualmente?"))return;
+  dirty=false;cur=null;myName="";mine=new Set();
+  $("#err").classList.add("hide");
+  await loadCfg();await loadMine();
+  $("#name").value="";$("#newBox").classList.add("hide");$("#oldBox").classList.add("hide");
+  $("#closed").classList.toggle("hide",!cfg.closed);
+  $("#homeBtns").classList.toggle("hide",cfg.closed);
+  show("home");
 }
-async function claim(name){
-  if(!name)return;
-  if(!confirm("¿Eres "+name+"? Pasarás a editar su apuesta desde este navegador.")){$("#claimList").value="";return}
-  clearTimeout(timer);dirty=false;
-  const{error}=await sb.rpc("reclamar",{p_name:name});
-  if(error)return fail("No se pudo recuperar: "+error.message);
-  await loadMine(name);
-  $("#err").classList.add("hide");$("#claimSel").classList.add("hide");loadPartis();
+function enter(p){
+  cur=p.id;myName=p.name;mine=new Set(p.picks);
+  $("#who").textContent=myName;$("#err").classList.add("hide");
+  show("vote");bet();window.scrollTo(0,0);
 }
-$("#claimLink").onclick=()=>{$("#claimSel").classList.toggle("hide");loadPartis()};
-$("#claimList").onchange=e=>claim(e.target.value);
-$("#whoSel").onchange=async e=>{
-  const v=e.target.value;await flush();
-  if(v==="new"){cur=null;myName="";mine=new Set();$("#name").value="";renderWho();bet();$("#name").focus()}
-  else pick(v);
+/* ---- Botón 1: añadir participante ---- */
+$("#btnNew").onclick=()=>{$("#oldBox").classList.add("hide");$("#newBox").classList.toggle("hide");$("#name").focus()};
+async function create(){
+  const n=$("#name").value.trim();
+  if(!n)return fail("Escribe tu nombre para empezar.");
+  if(cfg.closed)return fail("Las apuestas están cerradas.");
+  const{data,error}=await sb.from("picks").insert({user_id:uid,name:n,picks:[]}).select().single();
+  if(error)return fail(error.code==="23505"?"Ese nombre ya existe. Si eres tú, pulsa «Ya participo» y elígelo en la lista.":"No se pudo crear: "+error.message);
+  people.push(data);enter(data);
+}
+$("#btnGo").onclick=create;
+$("#name").onkeydown=e=>{if(e.key==="Enter")create()};
+/* ---- Botón 2: ya participo, elegir mi nombre ---- */
+$("#btnOld").onclick=async()=>{
+  $("#newBox").classList.add("hide");$("#oldBox").classList.toggle("hide");
+  const{data,error}=await sb.rpc("participantes");
+  if(error)return fail(error.message);
+  const n=(data||[]).map(p=>p.name);
+  $("#claimList").innerHTML=(n.length?'<option value="">— Elige tu nombre —</option>':'<option value="">Aún no hay participantes</option>')+n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+"</option>").join("");
 };
+$("#claimList").onchange=async e=>{
+  const name=e.target.value;if(!name)return;
+  let p=people.find(x=>x.name.toLowerCase()===name.toLowerCase());
+  if(!p){
+    if(!confirm("¿Eres "+name+"? Pasarás a editar su voto desde este navegador (si lo tenía en otro dispositivo, dejará de poder editarlo)."))return void(e.target.value="");
+    const{error}=await sb.rpc("reclamar",{p_name:name});
+    if(error)return fail("No se pudo recuperar: "+error.message);
+    await loadMine();p=people.find(x=>x.name.toLowerCase()===name.toLowerCase());
+    if(!p)return fail("No se encontró esa apuesta.");
+  }
+  enter(p);
+};
+$("#btnSwitch").onclick=goHome;
 function score(p){const A=new Set(cfg.absent),D=new Set(cfg.dead.filter(x=>!A.has(x))),pk=p.picks.filter(x=>!A.has(x)),h=pk.filter(x=>D.has(x)).length,f=pk.length-h,n=ALL.filter(x=>!A.has(x)).length;return{h,f,pts:h*cfg.a-f*cfg.b-(D.size-h)*cfg.c+(n-D.size-f)*cfg.d}}
 async function rank(){
   await loadCfg();
@@ -178,13 +193,12 @@ async function adm(){
   document.querySelectorAll("[data-x]").forEach(b=>b.onclick=async()=>{if(!confirm("¿Borrar a "+b.dataset.x+"?"))return;const{error}=await sb.rpc("admin_borrar",{k:K,p_name:b.dataset.x});if(error)return alert(error.message);adm()});
 }
 $("#admBtn").onclick=()=>{K=K||prompt("Clave de admin");if(K){tab("adm");adm()}};
-$("#name").oninput=e=>{myName=e.target.value;bet();save()};
 (async()=>{
   try{
     let{data:{session}}=await sb.auth.getSession();
     if(!session){const r=await sb.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session}
     uid=session.user.id;await loadCfg();
-    await loadMine();bet();loadPartis();
+    await goHome();
   }catch(e){fail("No se pudo conectar: "+(e.message||e))}
 })();
 </script>
