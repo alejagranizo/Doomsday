@@ -20,6 +20,7 @@ h1{font-size:34px;margin:6px 0 0;letter-spacing:.02em}
 .tabs button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 input[type=text],input[type=number]{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
 select{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
+#who{margin-bottom:8px}
 .link{background:none;border:0;color:var(--mu);text-decoration:underline;font:inherit;font-size:14px;padding:10px 0;cursor:pointer}
 h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 .chip{display:flex;justify-content:space-between;width:100%;padding:13px 14px;margin:0 0 5px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;font:inherit;text-align:left}
@@ -42,6 +43,7 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <div id="err" class="msg hide" style="border-color:var(--ko)"></div>
 <div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button></div>
 <section id="bet">
+  <div id="who" class="hide"><select id="whoSel" aria-label="Quién apuesta"></select></div>
   <input type="text" id="name" placeholder="Tu nombre" maxlength="24" autocomplete="off">
   <div id="claimBox" class="hide">
     <button class="link" id="claimLink" type="button">Ya aposté antes: elegir mi nombre de la lista</button>
@@ -73,7 +75,7 @@ const GRUPOS={
 const ALL=Object.values(GRUPOS).flat();
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let uid,cfg={closed:false,dead:[],absent:[],a:5,b:2,c:1,d:1},mine=new Set(),myName="",K=null,draft=null,timer;
+let uid,cfg={closed:false,dead:[],absent:[],a:5,b:2,c:1,d:1},mine=new Set(),myName="",K=null,draft=null,timer,people=[],cur=null,busy=false,dirty=false;
 function fail(m){const e=$("#err");e.textContent=m;e.classList.remove("hide")}
 function tab(t){["bet","rank","adm"].forEach(x=>$("#"+x).classList.toggle("hide",x!==t));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));if(t==="rank")rank()}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.t));
@@ -85,24 +87,70 @@ function bet(){
   $("#count").textContent=mine.size+" marcados como muertos"+(myName.trim()?"":" · escribe tu nombre para guardar");
   document.querySelectorAll("#list .chip").forEach(b=>b.onclick=()=>{const c=b.dataset.c;mine.has(c)?mine.delete(c):mine.add(c);bet();save()});
 }
-function save(){clearTimeout(timer);timer=setTimeout(async()=>{if(!myName.trim()||cfg.closed)return;const{error}=await sb.from("picks").upsert({user_id:uid,name:myName.trim(),picks:[...mine],updated_at:new Date().toISOString()});if(error){if(error.code==="23505"){fail("Ese nombre ya existe. Si eres tú, elígelo en «Ya aposté antes».");$("#claimSel").classList.remove("hide");loadPartis()}else fail("No se pudo guardar: "+error.message)}else{$("#err").classList.add("hide");$("#count").textContent=mine.size+" marcados como muertos · ✓ guardado"}},500)}
+function renderWho(){
+  $("#who").classList.toggle("hide",!people.length);
+  $("#whoSel").innerHTML=people.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+"</option>").join("")+'<option value="new">➕ Añadir otra persona</option>';
+  $("#whoSel").value=cur||"new";
+}
+function pick(id){
+  const p=people.find(x=>x.id===id);
+  cur=p?p.id:null;myName=p?p.name:"";mine=new Set(p?p.picks:[]);
+  $("#name").value=myName;renderWho();bet();
+  try{localStorage.setItem("porra_cur",cur||"")}catch(e){}
+}
+async function loadMine(selName){
+  const{data,error}=await sb.from("picks").select("*").eq("user_id",uid).order("updated_at");
+  if(error)return fail(error.message);
+  people=data||[];
+  let p=selName&&people.find(x=>x.name.toLowerCase()===selName.toLowerCase());
+  if(!p){let last="";try{last=localStorage.getItem("porra_cur")||""}catch(e){}p=people.find(x=>x.id===last)||people[0]}
+  pick(p?p.id:null);
+}
+function save(){dirty=true;clearTimeout(timer);timer=setTimeout(doSave,500)}
+async function doSave(){
+  if(busy){timer=setTimeout(doSave,300);return}
+  if(!dirty||!myName.trim()||cfg.closed)return;
+  busy=true;dirty=false;
+  try{
+    const row={name:myName.trim(),picks:[...mine],updated_at:new Date().toISOString()};
+    const r=cur?await sb.from("picks").update(row).eq("id",cur).select().single()
+               :await sb.from("picks").insert({...row,user_id:uid}).select().single();
+    if(r.error){
+      dirty=true;
+      if(r.error.code==="23505"){fail("Ese nombre ya existe. Si eres tú, elígelo en «Ya aposté antes».");$("#claimSel").classList.remove("hide");loadPartis()}
+      else fail("No se pudo guardar: "+r.error.message);
+      return;
+    }
+    const d=r.data,i=people.findIndex(x=>x.id===d.id);
+    if(i<0)people.push(d);else people[i]=d;
+    cur=d.id;renderWho();
+    $("#err").classList.add("hide");
+    $("#count").textContent=mine.size+" marcados como muertos · ✓ guardado";
+  }finally{busy=false}
+}
+async function flush(){clearTimeout(timer);while(busy)await new Promise(r=>setTimeout(r,100));await doSave()}
 async function loadPartis(){
-  const{data}=await sb.rpc("participantes"),n=(data||[]).map(p=>p.name);
+  const{data}=await sb.rpc("participantes");
+  const mios=new Set(people.map(p=>p.name.toLowerCase())),n=(data||[]).map(p=>p.name).filter(x=>!mios.has(x.toLowerCase()));
   $("#claimList").innerHTML='<option value="">— Elige tu nombre —</option>'+n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+"</option>").join("");
   $("#claimBox").classList.toggle("hide",cfg.closed||!n.length);
 }
 async function claim(name){
   if(!name)return;
   if(!confirm("¿Eres "+name+"? Pasarás a editar su apuesta desde este navegador.")){$("#claimList").value="";return}
-  clearTimeout(timer);
+  clearTimeout(timer);dirty=false;
   const{error}=await sb.rpc("reclamar",{p_name:name});
   if(error)return fail("No se pudo recuperar: "+error.message);
-  const{data}=await sb.from("picks").select("*").eq("user_id",uid).maybeSingle();
-  if(data){myName=data.name;$("#name").value=myName;mine=new Set(data.picks)}
-  $("#err").classList.add("hide");$("#claimSel").classList.add("hide");bet();loadPartis();
+  await loadMine(name);
+  $("#err").classList.add("hide");$("#claimSel").classList.add("hide");loadPartis();
 }
 $("#claimLink").onclick=()=>{$("#claimSel").classList.toggle("hide");loadPartis()};
 $("#claimList").onchange=e=>claim(e.target.value);
+$("#whoSel").onchange=async e=>{
+  const v=e.target.value;await flush();
+  if(v==="new"){cur=null;myName="";mine=new Set();$("#name").value="";renderWho();bet();$("#name").focus()}
+  else pick(v);
+};
 function score(p){const A=new Set(cfg.absent),D=new Set(cfg.dead.filter(x=>!A.has(x))),pk=p.picks.filter(x=>!A.has(x)),h=pk.filter(x=>D.has(x)).length,f=pk.length-h,n=ALL.filter(x=>!A.has(x)).length;return{h,f,pts:h*cfg.a-f*cfg.b-(D.size-h)*cfg.c+(n-D.size-f)*cfg.d}}
 async function rank(){
   await loadCfg();
@@ -136,9 +184,7 @@ $("#name").oninput=e=>{myName=e.target.value;bet();save()};
     let{data:{session}}=await sb.auth.getSession();
     if(!session){const r=await sb.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session}
     uid=session.user.id;await loadCfg();
-    const{data}=await sb.from("picks").select("*").eq("user_id",uid).maybeSingle();
-    if(data){myName=data.name;$("#name").value=myName;mine=new Set(data.picks)}
-    bet();loadPartis();
+    await loadMine();bet();loadPartis();
   }catch(e){fail("No se pudo conectar: "+(e.message||e))}
 })();
 </script>
