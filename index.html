@@ -14,8 +14,13 @@
 body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.4 "Barlow",system-ui,sans-serif;background:radial-gradient(900px 420px at 50% -120px,rgba(214,32,44,.30),transparent 70%) no-repeat,var(--bg)}
 main{max-width:560px;margin:auto;padding:16px 14px 90px}
 h1,.pts,.gh,.big{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:700}
-h1{font-size:46px;line-height:1;margin:14px 0 8px;padding-left:12px;border-left:6px solid var(--red);text-transform:uppercase;letter-spacing:.04em}
-.sub{color:var(--mu);margin:0 0 14px;font-size:15px}
+h1{position:absolute;left:0;right:0;bottom:14px;z-index:2;margin:0;text-align:center;font-size:48px;line-height:1;text-transform:uppercase;letter-spacing:.05em;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+h1::after{content:"";display:block;width:64px;height:4px;margin:8px auto 0;background:var(--red)}
+.art{position:relative;height:210px;margin:6px 0 10px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--cd)}
+.art::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(transparent 35%,rgba(7,11,20,.9))}
+.artsvg,#heroImg{position:absolute;inset:0;width:100%;height:100%}
+#heroImg{object-fit:cover}
+.sub{color:var(--mu);margin:0 0 14px;font-size:15px;text-align:center}
 .tabs{display:flex;gap:6px;margin:10px 0 14px}
 .tabs button,.s{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:4px;font:inherit;font-size:15px;cursor:pointer}
 .tabs button.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
@@ -42,7 +47,7 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 .chip.sel,.chip.d1{border-color:var(--ko);background:linear-gradient(90deg,rgba(214,32,44,.30),var(--cd2) 75%);box-shadow:inset 4px 0 0 var(--ko)}
 .chip.sel small,.chip.d1 small{color:var(--ko);font-weight:600}
 .chip.d2{opacity:.45;text-decoration:line-through}
-.chip small{color:var(--mu)}
+.chip small{color:var(--mu);font-size:20px;line-height:1}
 .bar{position:sticky;bottom:0;background:var(--bg);padding:10px 0;font-size:14px;color:var(--mu);border-top:1px solid var(--bd)}
 .card{background:var(--cd);border:1px solid var(--bd);border-radius:6px;padding:12px 14px;margin:0 0 8px}
 .card.top{border-color:var(--gold);box-shadow:inset 4px 0 0 var(--gold)}
@@ -62,8 +67,32 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 </head>
 <body>
 <main>
-<h1>Porra Doomsday</h1>
-<p class="sub">Marca quién crees que muere en Avengers: Doomsday.</p>
+<header class="hero">
+  <div class="art">
+    <svg class="artsvg" viewBox="0 0 560 210" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Siluetas de un equipo de héroes">
+<defs>
+<linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".55" stop-color="#2a0f1d"/><stop offset="1" stop-color="#9a2024"/></linearGradient>
+<radialGradient id="sun"><stop offset="0" stop-color="#ff9a55" stop-opacity=".6"/><stop offset="1" stop-color="#ff9a55" stop-opacity="0"/></radialGradient>
+<filter id="gl" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<g id="hb"><path d="M-11 0V-54H-1V0Z M1 0V-54H11V0Z"/><path d="M-17 -52L-22 -102Q0 -108 22 -102L17 -52Z"/><path d="M-22 -100L-34 -58L-27 -55L-16 -92Z M22 -100L34 -58L27 -55L16 -92Z"/><circle cy="-114" r="11"/></g>
+</defs>
+<rect width="560" height="210" fill="url(#bgG)"/>
+<circle cx="280" cy="150" r="215" fill="url(#sun)"/>
+<g fill="#0c1424"><rect x="-6" y="156" width="40" height="44"/><rect x="36" y="138" width="40" height="62"/><rect x="78" y="150" width="40" height="50"/><rect x="120" y="124" width="40" height="76"/><rect x="162" y="146" width="40" height="54"/><rect x="204" y="132" width="40" height="68"/><rect x="246" y="154" width="40" height="46"/><rect x="288" y="120" width="40" height="80"/><rect x="330" y="142" width="40" height="58"/><rect x="372" y="150" width="40" height="50"/><rect x="414" y="128" width="40" height="72"/><rect x="456" y="144" width="40" height="56"/><rect x="498" y="136" width="40" height="64"/><rect x="540" y="152" width="40" height="48"/></g>
+<g fill="#05080f">
+<g transform="translate(110 200) scale(.92)"><use xlink:href="#hb" href="#hb"/><path d="M-42 -134Q-76 -80 -42 -24" fill="none" stroke="#2b3a5c" stroke-width="3"/><path d="M-42 -134V-24" stroke="#2b3a5c" stroke-width="1"/></g>
+<g transform="translate(195 200)"><use xlink:href="#hb" href="#hb"/><circle cx="-38" cy="-72" r="23" stroke="#d6202c" stroke-width="4"/><circle cx="-38" cy="-72" r="10" fill="none" stroke="#f0b429" stroke-width="2"/></g>
+<g transform="translate(280 200) scale(1.15)"><path d="M-20 -102Q-58 -60 -50 -8L-16 -22L16 -22L50 -8Q58 -60 20 -102Z" fill="#101a2e" stroke="#d6202c" stroke-width="1.5"/><use xlink:href="#hb" href="#hb"/></g>
+<g transform="translate(365 200)"><use xlink:href="#hb" href="#hb"/><g transform="translate(32 -58) rotate(25)"><rect x="-2.5" y="-60" width="5" height="76"/><rect x="-16" y="-74" width="32" height="20" rx="3"/></g></g>
+<g transform="translate(466 200) scale(.92)"><use xlink:href="#hb" href="#hb"/><circle cy="-84" r="6" fill="#8be9ff" filter="url(#gl)"/><circle cx="-32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/><circle cx="32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/></g>
+<rect y="198" width="560" height="12"/>
+</g>
+</svg>
+    <img id="heroImg" src="vengadores.jpg" alt="" onerror="this.remove()">
+    <h1>Porra Doomsday</h1>
+  </div>
+  <p class="sub">Marca quién crees que muere en Avengers: Doomsday.</p>
+</header>
 <div id="err" class="msg hide" style="border-color:var(--ko)"></div>
 <div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button></div>
 <section id="bet">
@@ -127,7 +156,7 @@ function acc(root,set){
   });
 }
 function bet(){
-  const chip=c=>{const s=mine.has(c);return '<button class="chip'+(s?" sel":"")+'" data-c="'+esc(c)+'"'+(cfg.closed?" disabled":"")+"><span>"+esc(c)+"</span><small>"+(s?"Muere":"")+"</small></button>"};
+  const chip=c=>{const s=mine.has(c);return '<button class="chip'+(s?" sel":"")+'" data-c="'+esc(c)+'"'+(cfg.closed?" disabled":"")+"><span>"+esc(c)+"</span><small>"+(s?"💀":"")+"</small></button>"};
   $("#list").innerHTML=Object.entries(GRUPOS).map(([g,a])=>grp(g,a,OP.bet,chip,a.filter(c=>mine.has(c)).length)).join("");
   acc($("#list"),OP.bet);
   $("#count").textContent=mine.size+" marcados como muertos"+(cfg.closed?" · apuestas cerradas":"");
@@ -218,9 +247,9 @@ let parts=null;
 async function adm(refresh){
   if(!draft)draft={closed:cfg.closed,dead:[...cfg.dead],absent:[...cfg.absent],a:cfg.a,b:cfg.b,c:cfg.c,d:cfg.d};
   if(!parts||refresh)parts=(await sb.rpc("participantes")).data||[];
-  let h='<p class="sub">Toca un personaje: 1 vez = murió, 2 veces = no aparece.</p><label><input type="checkbox" id="cl"'+(draft.closed?" checked":"")+"> Cerrar apuestas</label>";
+  let h='<p class="sub">Toca un personaje: 1 vez = 💀 murió, 2 veces = 🚫 no aparece.</p><label><input type="checkbox" id="cl"'+(draft.closed?" checked":"")+"> Cerrar apuestas</label>";
   h+="<h2>Puntos: acierto · apostar y no muere · muerte no apostada · no apostar y no muere</h2><div class='row'>"+["a","b","c","d"].map(k=>'<input type="number" data-k="'+k+'" value="'+draft[k]+'">').join("")+"</div>";
-  h+=Object.entries(GRUPOS).map(([g,a])=>grp(g,a,OP.adm,c=>{const s=draft.dead.includes(c)?1:draft.absent.includes(c)?2:0;return '<button class="chip d'+s+'" data-c="'+esc(c)+'"><span>'+esc(c)+"</span><small>"+["","Murió","No aparece"][s]+"</small></button>"},a.filter(c=>draft.dead.includes(c)).length)).join("");
+  h+=Object.entries(GRUPOS).map(([g,a])=>grp(g,a,OP.adm,c=>{const s=draft.dead.includes(c)?1:draft.absent.includes(c)?2:0;return '<button class="chip d'+s+'" data-c="'+esc(c)+'"><span>'+esc(c)+"</span><small>"+["","💀","🚫"][s]+"</small></button>"},a.filter(c=>draft.dead.includes(c)).length)).join("");
   h+='<button class="s" id="sv" style="width:100%;margin:14px 0">Guardar cambios</button><h2>Participantes</h2>'+parts.map(p=>'<div class="card row"><span>'+esc(p.name)+'</span><button class="s" data-x="'+esc(p.name)+'">Borrar</button></div>').join("");
   $("#adm").innerHTML=h;acc($("#adm"),OP.adm);
   $("#cl").onchange=e=>draft.closed=e.target.checked;
