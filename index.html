@@ -192,7 +192,14 @@ async function adm(){
   $("#sv").onclick=async()=>{const{error}=await sb.rpc("admin_config",{k:K,p_closed:draft.closed,p_dead:draft.dead,p_absent:draft.absent,p_a:draft.a,p_b:draft.b,p_c:draft.c,p_d:draft.d});if(error)return alert(error.message);await loadCfg();alert("Guardado")};
   document.querySelectorAll("[data-x]").forEach(b=>b.onclick=async()=>{if(!confirm("¿Borrar a "+b.dataset.x+"?"))return;const{error}=await sb.rpc("admin_borrar",{k:K,p_name:b.dataset.x});if(error)return alert(error.message);adm()});
 }
-$("#admBtn").onclick=()=>{K=K||prompt("Clave de admin");if(K){tab("adm");adm()}};
+$("#admBtn").onclick=async()=>{
+  if(K){tab("adm");adm();return}                      // clave ya validada en esta sesión
+  const k=prompt("Clave de admin");if(!k)return;
+  const{data,error}=await sb.rpc("admin_check",{k});   // el servidor comprueba la clave
+  if(error)return alert("No se pudo comprobar la clave: "+error.message);
+  if(data!==true)return alert("Clave incorrecta");
+  K=k;tab("adm");adm();                                // solo se entra si es correcta
+};
 (async()=>{
   try{
     let{data:{session}}=await sb.auth.getSession();
