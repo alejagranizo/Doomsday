@@ -18,7 +18,7 @@ h1,.pts{font-family:"Russo One",Impact,sans-serif;font-weight:400}
 h1{position:absolute;left:0;right:0;bottom:12px;z-index:2;margin:0;text-align:center;font-size:clamp(24px,8.4vw,46px);line-height:1.05;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;filter:drop-shadow(0 2px 8px rgba(0,0,0,.85))}
 h1 span{background:linear-gradient(180deg,#fff 0%,#d5deea 40%,#8796ad 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 h1::after{content:"";display:block;width:64px;height:4px;margin:8px auto 0;background:var(--red)}
-.art{position:relative;aspect-ratio:400/270;max-height:350px;width:100%;margin:6px 0 10px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--cd)}
+.art{position:relative;aspect-ratio:400/300;width:100%;max-width:440px;margin:6px auto 10px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--cd)}
 .art::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(transparent 55%,rgba(7,11,20,.85))}
 .artsvg,#heroImg{position:absolute;inset:0;width:100%;height:100%}
 #heroImg{object-fit:cover}
@@ -71,37 +71,60 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <main>
 <header class="hero">
   <div class="art">
-    <svg class="artsvg" viewBox="0 0 400 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doctor Doom en el centro rodeado de los símbolos de Capitán América, Viuda Negra, Thor e Iron Man">
+    <svg class="artsvg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo de Los Vengadores sobre Doctor Doom, rodeado de héroes, con la nave de los 4 Fantásticos al fondo">
 <defs>
 <linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".55" stop-color="#2a0f1d"/><stop offset=".8" stop-color="#7d1a20"/><stop offset="1" stop-color="#070b14"/></linearGradient>
 <radialGradient id="aura"><stop offset="0" stop-color="#5dffa0" stop-opacity=".5"/><stop offset="1" stop-color="#5dffa0" stop-opacity="0"/></radialGradient>
+<radialGradient id="redg"><stop offset="0" stop-color="#ff3b47" stop-opacity=".55"/><stop offset="1" stop-color="#ff3b47" stop-opacity="0"/></radialGradient>
+<linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#cfd9e6"/><stop offset="1" stop-color="#7f8da3"/></linearGradient>
+<linearGradient id="trail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#cfe9ff" stop-opacity="0"/><stop offset="1" stop-color="#cfe9ff" stop-opacity=".75"/></linearGradient>
 <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070b14" stop-opacity="0"/><stop offset=".5" stop-color="#070b14" stop-opacity=".95"/><stop offset="1" stop-color="#070b14"/></linearGradient>
 <filter id="gl" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
-<rect width="400" height="270" fill="url(#bgG)"/>
-<circle cx="200" cy="95" r="125" fill="url(#aura)"/>
-<g fill="#ffb27a" opacity=".6"><circle cx="40" cy="60" r="1.3"/><circle cx="120" cy="40" r="1"/><circle cx="160" cy="30" r="1.1"/><circle cx="250" cy="36" r="1.2"/><circle cx="330" cy="50" r="1"/><circle cx="372" cy="86" r="1.3"/><circle cx="70" cy="95" r="1"/><circle cx="340" cy="110" r="1.1"/></g>
-<g fill="#0c1424"><rect x="-8" y="174" width="30" height="26"/><rect x="24" y="160" width="30" height="40"/><rect x="56" y="170" width="30" height="30"/><rect x="88" y="150" width="30" height="50"/><rect x="120" y="166" width="30" height="34"/><rect x="152" y="156" width="30" height="44"/><rect x="184" y="172" width="30" height="28"/><rect x="216" y="148" width="30" height="52"/><rect x="248" y="164" width="30" height="36"/><rect x="280" y="170" width="30" height="30"/><rect x="312" y="152" width="30" height="48"/><rect x="344" y="166" width="30" height="34"/><rect x="376" y="158" width="30" height="42"/></g>
+<rect width="400" height="300" fill="url(#bgG)"/>
 
+<g transform="translate(0 30)">
+<circle cx="200" cy="95" r="125" fill="url(#aura)"/>
+<g fill="#ffb27a" opacity=".6"><circle cx="40" cy="70" r="1.3"/><circle cx="120" cy="60" r="1"/><circle cx="160" cy="50" r="1.1"/><circle cx="250" cy="56" r="1.2"/><circle cx="372" cy="100" r="1.3"/><circle cx="70" cy="105" r="1"/><circle cx="340" cy="130" r="1.1"/><circle cx="30" cy="40" r="1"/></g>
+<g fill="#0c1424"><rect x="-8" y="174" width="30" height="26"/><rect x="24" y="160" width="30" height="40"/><rect x="56" y="170" width="30" height="30"/><rect x="88" y="150" width="30" height="50"/><rect x="120" y="166" width="30" height="34"/><rect x="152" y="156" width="30" height="44"/><rect x="184" y="172" width="30" height="28"/><rect x="216" y="148" width="30" height="52"/><rect x="248" y="164" width="30" height="36"/><rect x="280" y="170" width="30" height="30"/><rect x="312" y="152" width="30" height="48"/><rect x="344" y="166" width="30" height="34"/><rect x="376" y="158" width="30" height="42"/></g>
+</g>
+
+<!-- NAVE ESTILO 4 FANTÁSTICOS (al fondo, arriba a la derecha) -->
+<g transform="translate(312 84) rotate(-9)">
+  <path d="M-70 4L-26 0V8Z" fill="url(#trail)"/>
+  <path d="M-16 -3L-32 -17L-6 -7Z" fill="#2a6bd1"/>
+  <path d="M-16 9L-32 23L-6 13Z" fill="#2a6bd1"/>
+  <path d="M-28 3Q-26 -7 -10 -9Q10 -11 26 -3Q36 1 36 4Q36 7 26 10Q10 14 -10 13Q-26 12 -28 3Z" fill="#e8eef7" stroke="#9fb3cc" stroke-width="1"/>
+  <path d="M0 -8Q12 -16 24 -4Z" fill="#7fd4ff" stroke="#4aa9d8" stroke-width=".8"/>
+  <rect x="-24" y="4" width="46" height="3" fill="#2a6bd1"/>
+  <circle cx="-30" cy="4" r="3.4" fill="#8be9ff" filter="url(#gl)"/>
+  <circle cx="-6" cy="-0.5" r="4.6" fill="#1d4f9f"/>
+  <path d="M-7.6 -3L-8.4 0.6H-4.6M-6 -3V3" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+<!-- LOGO DE LOS VENGADORES -->
+<g transform="translate(200 40)">
+  <circle r="46" fill="url(#redg)"/>
+  <circle r="30" fill="#0e1626" stroke="url(#silver)" stroke-width="4"/>
+  <path fill="url(#silver)" fill-rule="evenodd" d="M-4.5 -19H4.5L17 19H8.5L6 13H-6L-8.5 19H-17ZM0 -9.5L3.8 5H-3.8Z"/>
+</g>
+
+<g transform="translate(0 30)">
 <!-- EMBLEMAS DE LOS HÉROES -->
-<!-- Capitán América: escudo -->
 <g transform="translate(40 132) scale(.93)">
   <circle r="27" fill="#d6202c"/><circle r="21" fill="#f2f5f8"/><circle r="15" fill="#d6202c"/><circle r="10.5" fill="#1e4ea1"/>
   <path d="M0 -8L2.4 -2.5H8L3.6 1L5.2 6.8L0 3.4L-5.2 6.8L-3.6 1L-8 -2.5H-2.4Z" fill="#f2f5f8"/>
 </g>
-<!-- Viuda Negra (Natasha Romanoff): reloj de arena -->
 <g transform="translate(86 165) scale(.93)">
   <circle r="27" fill="#141b2b" stroke="#d6202c" stroke-width="3.5"/>
   <path d="M-10 -14H10L0 0ZM-10 14H10L0 0Z" fill="#d6202c"/>
 </g>
-<!-- Thor: Mjolnir y rayos -->
 <g transform="translate(314 165) scale(.93)">
   <circle r="27" fill="#141b2b" stroke="#9fb3cc" stroke-width="3.5"/>
   <rect x="-2.2" y="-3" width="4.4" height="19" rx="1.5" fill="#8a5a33"/>
   <rect x="-13" y="-15" width="26" height="12" rx="2.5" fill="#c3cfdd"/>
   <path d="M-21 -8L-16 -2L-19 -2L-14 6M21 -8L16 -2L19 -2L14 6" fill="none" stroke="#7fd4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
-<!-- Iron Man: reactor -->
 <g transform="translate(360 132) scale(.93)">
   <circle r="27" fill="#7a1219" stroke="#f0b429" stroke-width="3.5"/>
   <circle r="12" fill="none" stroke="#8be9ff" stroke-width="3" filter="url(#gl)"/>
@@ -110,7 +133,7 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 </g>
 
 <!-- DOCTOR DOOM -->
-<g transform="translate(200 214) scale(.9) translate(-200 -214)">
+<g transform="translate(200 214) scale(.84) translate(-200 -214)">
 <path d="M128 126Q200 98 272 126L304 214H96Z" fill="#1f5a3a" stroke="#47a36b" stroke-width="2"/>
 <path d="M164 128H236L228 214H172Z" fill="#12251b"/>
 <path d="M168 116H232L224 136H176Z" fill="#9aa6b2" stroke="#5c6a77" stroke-width="1.5"/>
@@ -123,9 +146,10 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <path d="M177 80L194 83L192 90L177 87ZM223 80L206 83L208 90L223 87Z" fill="#8dffbb" filter="url(#gl)"/>
 <path d="M200 84V102M189 111H211" stroke="#7d8a97" stroke-width="2.4"/>
 <circle cx="177" cy="101" r="1.8" fill="#7d8a97"/><circle cx="223" cy="101" r="1.8" fill="#7d8a97"/>
-
 </g>
-<rect y="150" width="400" height="120" fill="url(#fade)"/>
+</g>
+
+<rect y="180" width="400" height="120" fill="url(#fade)"/>
 </svg>
     <img id="heroImg" src="vengadores.jpg" alt="" onerror="this.remove()">
     <h1><span>Porra Doomsday</span></h1>
