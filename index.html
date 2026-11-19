@@ -26,6 +26,8 @@ h1::after{content:"";display:block;width:64px;height:4px;margin:8px auto 0;backg
 .tabs{display:flex;gap:6px;margin:10px 0 14px}
 .tabs button,.s{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:4px;font:inherit;font-size:15px;cursor:pointer}
 .tabs button.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+.tabs button.q{flex:none;width:44px;font-weight:700}
+#helpBox ul{margin:6px 0 0;padding-left:18px}
 input[type=text],input[type=number],select{width:100%;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:4px;background:var(--cd2);color:var(--tx)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
@@ -168,7 +170,8 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
   <p class="sub">Marca quién crees que muere en Avengers: Doomsday.</p>
 </header>
 <div id="err" class="msg hide" style="border-color:var(--ko)"></div>
-<div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button></div>
+<div class="tabs"><button data-t="bet" class="on">Mi apuesta</button><button data-t="rank">Ranking</button><button class="q" id="btnHelp" aria-label="Cómo se puntúa">?</button></div>
+<div id="helpBox" class="msg hide"></div>
 <section id="bet">
   <div id="home">
     <div id="closed" class="msg hide">Apuestas cerradas. Mira el Ranking para ver los resultados.</div>
@@ -214,6 +217,17 @@ let uid,cfg={closed:false,dead:[],absent:[],a:5,b:2,c:1,d:1},mine=new Set(),myNa
 function fail(m){const e=$("#err");e.textContent=m;e.classList.remove("hide")}
 function tab(t){["bet","rank","adm"].forEach(x=>$("#"+x).classList.toggle("hide",x!==t));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));if(t==="rank")rank()}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.t));
+$("#btnHelp").onclick=()=>{
+  const h=$("#helpBox");
+  if(!h.classList.contains("hide")){h.classList.add("hide");return}
+  h.innerHTML='<b>¿Cómo se puntúa?</b><ul>'
+   +'<li><b>+'+cfg.a+'</b> por cada personaje que marcas 💀 y muere.</li>'
+   +'<li><b>−'+cfg.b+'</b> por cada personaje que marcas 💀 y no muere.</li>'
+   +'<li><b>−'+cfg.c+'</b> por cada personaje que muere y no marcaste.</li>'
+   +'<li><b>+'+cfg.d+'</b> por cada personaje que no marcas y no muere.</li></ul>'
+   +'<p style="margin:8px 0 0">Los personajes que finalmente no aparecen en la película no puntúan. Gana quien más puntos tenga; en caso de empate, quien tenga más aciertos. El ranking se muestra al cerrarse las apuestas.</p>';
+  h.classList.remove("hide");
+};
 function show(v){$("#home").classList.toggle("hide",v!=="home");$("#vote").classList.toggle("hide",v!=="vote")}
 const OP={bet:new Set(),adm:new Set()};             // equipos desplegados (se recuerdan al repintar)
 const lbl=g=>g.replace("No confirmados · ","");
