@@ -14,10 +14,10 @@
 body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.4 "Barlow",system-ui,sans-serif;background:radial-gradient(900px 420px at 50% -120px,rgba(214,32,44,.30),transparent 70%) no-repeat,var(--bg)}
 main{max-width:560px;margin:auto;padding:16px 14px 90px}
 h1,.pts,.gh,.big{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:700}
-h1{position:absolute;left:0;right:0;bottom:14px;z-index:2;margin:0;text-align:center;font-size:48px;line-height:1;text-transform:uppercase;letter-spacing:.05em;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+h1{position:absolute;left:0;right:0;bottom:12px;z-index:2;margin:0;text-align:center;font-size:clamp(30px,11vw,50px);line-height:1;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;text-shadow:0 2px 14px rgba(0,0,0,.8)}
 h1::after{content:"";display:block;width:64px;height:4px;margin:8px auto 0;background:var(--red)}
-.art{position:relative;height:210px;margin:6px 0 10px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--cd)}
-.art::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(transparent 35%,rgba(7,11,20,.9))}
+.art{position:relative;aspect-ratio:400/270;max-height:350px;width:100%;margin:6px 0 10px;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--cd)}
+.art::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(transparent 55%,rgba(7,11,20,.85))}
 .artsvg,#heroImg{position:absolute;inset:0;width:100%;height:100%}
 #heroImg{object-fit:cover}
 .sub{color:var(--mu);margin:0 0 14px;font-size:15px;text-align:center}
@@ -69,27 +69,67 @@ h2{font-size:14px;color:var(--mu);margin:20px 0 6px;font-weight:600}
 <main>
 <header class="hero">
   <div class="art">
-    <svg class="artsvg" viewBox="0 0 560 210" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Siluetas de un equipo de héroes">
+    <svg class="artsvg" viewBox="0 0 400 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Doctor Doom en el centro rodeado de héroes, entre ellos Viuda Negra">
 <defs>
-<linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".55" stop-color="#2a0f1d"/><stop offset="1" stop-color="#9a2024"/></linearGradient>
-<radialGradient id="sun"><stop offset="0" stop-color="#ff9a55" stop-opacity=".6"/><stop offset="1" stop-color="#ff9a55" stop-opacity="0"/></radialGradient>
-<filter id="gl" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".5" stop-color="#2a0f1d"/><stop offset=".72" stop-color="#8f1d22"/><stop offset="1" stop-color="#070b14"/></linearGradient>
+<radialGradient id="sun"><stop offset="0" stop-color="#ff9a55" stop-opacity=".55"/><stop offset="1" stop-color="#ff9a55" stop-opacity="0"/></radialGradient>
+<radialGradient id="aura"><stop offset="0" stop-color="#5dffa0" stop-opacity=".55"/><stop offset="1" stop-color="#5dffa0" stop-opacity="0"/></radialGradient>
+<linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f"/><stop offset="1" stop-color="#070b14"/></linearGradient>
+<filter id="gl" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <g id="hb"><path d="M-11 0V-54H-1V0Z M1 0V-54H11V0Z"/><path d="M-17 -52L-22 -102Q0 -108 22 -102L17 -52Z"/><path d="M-22 -100L-34 -58L-27 -55L-16 -92Z M22 -100L34 -58L27 -55L16 -92Z"/><circle cy="-114" r="11"/></g>
 </defs>
-<rect width="560" height="210" fill="url(#bgG)"/>
-<circle cx="280" cy="150" r="215" fill="url(#sun)"/>
-<g fill="#0c1424"><rect x="-6" y="156" width="40" height="44"/><rect x="36" y="138" width="40" height="62"/><rect x="78" y="150" width="40" height="50"/><rect x="120" y="124" width="40" height="76"/><rect x="162" y="146" width="40" height="54"/><rect x="204" y="132" width="40" height="68"/><rect x="246" y="154" width="40" height="46"/><rect x="288" y="120" width="40" height="80"/><rect x="330" y="142" width="40" height="58"/><rect x="372" y="150" width="40" height="50"/><rect x="414" y="128" width="40" height="72"/><rect x="456" y="144" width="40" height="56"/><rect x="498" y="136" width="40" height="64"/><rect x="540" y="152" width="40" height="48"/></g>
+<rect width="400" height="270" fill="url(#bgG)"/>
+<circle cx="200" cy="125" r="190" fill="url(#sun)"/>
+<circle cx="200" cy="105" r="105" fill="url(#aura)"/>
+<g fill="#ffb27a" opacity=".7"><circle cx="60" cy="80" r="1.4"/><circle cx="110" cy="58" r="1"/><circle cx="150" cy="92" r="1.2"/><circle cx="245" cy="72" r="1.3"/><circle cx="305" cy="50" r="1"/><circle cx="342" cy="88" r="1.4"/><circle cx="88" cy="132" r="1"/><circle cx="312" cy="122" r="1.2"/><circle cx="178" cy="40" r="1.1"/><circle cx="228" cy="98" r="1"/></g>
+<g fill="#0c1424"><rect x="-8" y="150" width="30" height="46"/><rect x="24" y="126" width="30" height="70"/><rect x="56" y="144" width="30" height="52"/><rect x="88" y="112" width="30" height="84"/><rect x="120" y="138" width="30" height="58"/><rect x="152" y="120" width="30" height="76"/><rect x="184" y="148" width="30" height="48"/><rect x="216" y="108" width="30" height="88"/><rect x="248" y="136" width="30" height="60"/><rect x="280" y="144" width="30" height="52"/><rect x="312" y="116" width="30" height="80"/><rect x="344" y="140" width="30" height="56"/><rect x="376" y="124" width="30" height="72"/></g>
+<rect y="196" width="400" height="74" fill="url(#gnd)"/>
+<rect y="195" width="400" height="2" fill="#d6202c" opacity=".35"/>
+
 <g fill="#05080f">
-<g transform="translate(110 200) scale(.92)"><use xlink:href="#hb" href="#hb"/><path d="M-42 -134Q-76 -80 -42 -24" fill="none" stroke="#2b3a5c" stroke-width="3"/><path d="M-42 -134V-24" stroke="#2b3a5c" stroke-width="1"/></g>
-<g transform="translate(195 200)"><use xlink:href="#hb" href="#hb"/><circle cx="-38" cy="-72" r="23" stroke="#d6202c" stroke-width="4"/><circle cx="-38" cy="-72" r="10" fill="none" stroke="#f0b429" stroke-width="2"/></g>
-<g transform="translate(280 200) scale(1.15)"><path d="M-20 -102Q-58 -60 -50 -8L-16 -22L16 -22L50 -8Q58 -60 20 -102Z" fill="#101a2e" stroke="#d6202c" stroke-width="1.5"/><use xlink:href="#hb" href="#hb"/></g>
-<g transform="translate(365 200)"><use xlink:href="#hb" href="#hb"/><g transform="translate(32 -58) rotate(25)"><rect x="-2.5" y="-60" width="5" height="76"/><rect x="-16" y="-74" width="32" height="20" rx="3"/></g></g>
-<g transform="translate(466 200) scale(.92)"><use xlink:href="#hb" href="#hb"/><circle cy="-84" r="6" fill="#8be9ff" filter="url(#gl)"/><circle cx="-32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/><circle cx="32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/></g>
-<rect y="198" width="560" height="12"/>
+  <!-- Escudo (izquierda) -->
+  <g transform="translate(66 196) scale(.85)"><use xlink:href="#hb" href="#hb"/><circle cx="-34" cy="-70" r="21" stroke="#d6202c" stroke-width="4"/><circle cx="-34" cy="-70" r="9" fill="none" stroke="#f0b429" stroke-width="2"/></g>
+  <!-- Martillo (derecha) -->
+  <g transform="translate(276 196) scale(.88)"><use xlink:href="#hb" href="#hb"/><g transform="translate(36 -58) rotate(10)"><rect x="-2.5" y="-48" width="5" height="64"/><rect x="-16" y="-62" width="32" height="20" rx="3"/></g></g>
+  <!-- Armadura luminosa (derecha) -->
+  <g transform="translate(352 196) scale(.85)"><use xlink:href="#hb" href="#hb"/><circle cy="-84" r="6" fill="#8be9ff" filter="url(#gl)"/><circle cx="-32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/><circle cx="32" cy="-56" r="5" fill="#8be9ff" filter="url(#gl)"/></g>
+</g>
+
+<!-- DOCTOR DOOM (centro) -->
+<g transform="translate(200 196) scale(1.1)">
+  <path d="M-22 -104Q-64 -60 -60 -4L-18 -16L18 -16L60 -4Q64 -60 22 -104Z" fill="#1d4a30" stroke="#47a36b" stroke-width="1.2"/>
+  <path d="M-14 -98Q-40 -60 -34 -12L-10 -20L10 -20L34 -12Q40 -60 14 -98Z" fill="#0f2a1c"/>
+  <use xlink:href="#hb" href="#hb" fill="#18261f"/>
+  <path d="M-14 -97H14L12 -66H-12Z" fill="#244b36"/>
+  <rect x="-17" y="-60" width="34" height="5" fill="#9aa6b2"/>
+  <rect x="-3" y="-61.5" width="6" height="8" rx="1" fill="#8dffbb" filter="url(#gl)"/>
+  <ellipse cx="-23" cy="-99" rx="8" ry="6" fill="#9aa6b2" stroke="#5c6a77" stroke-width="1"/>
+  <ellipse cx="23" cy="-99" rx="8" ry="6" fill="#9aa6b2" stroke="#5c6a77" stroke-width="1"/>
+  <circle cx="-31" cy="-56" r="4.5" fill="#9aa6b2"/>
+  <circle cx="31" cy="-56" r="4.5" fill="#9aa6b2"/>
+  <circle cx="39" cy="-66" r="6" fill="#9dffc2" filter="url(#gl)"/>
+  <path d="M-17 -112Q-20 -148 0 -150Q20 -148 17 -112L12 -100Q0 -95 -12 -100Z" fill="#2a6a43" stroke="#47a36b" stroke-width=".8"/>
+  <ellipse cy="-115" rx="9.5" ry="11.5" fill="#b3bec9"/>
+  <path d="M-9 -119Q0 -123 9 -119" fill="none" stroke="#6b7783" stroke-width="1.2"/>
+  <rect x="-6.5" y="-118.5" width="4.5" height="2" fill="#8dffbb" filter="url(#gl)"/>
+  <rect x="2" y="-118.5" width="4.5" height="2" fill="#8dffbb" filter="url(#gl)"/>
+  <path d="M0 -116V-110M-3.5 -107.5H3.5" stroke="#7a8794" stroke-width="1.1"/>
+  <path d="M-12 -101Q0 -94 12 -101L10 -96Q0 -90 -10 -96Z" fill="#8f9ca8"/>
+</g>
+
+<!-- NATASHA ROMANOFF (delante, a la izquierda de Doom) -->
+<g transform="translate(118 205) scale(.95)" fill="#05080f">
+  <use xlink:href="#hb" href="#hb"/>
+  <path d="M-8 -123Q-36 -130 -31 -94Q-25 -113 -12 -110Z" fill="#d4572a"/>
+  <path d="M-11.5 -113Q-12 -129 0 -129Q12 -129 11.5 -113Q6 -121 -4 -119Q-9 -118 -11.5 -113Z" fill="#d4572a"/>
+  <rect x="-17" y="-60" width="34" height="4" fill="#3a2a22"/>
+  <path d="M-4 -60H4L0 -56Z M-4 -52H4L0 -56Z" fill="#d6202c"/>
+  <circle cx="-31" cy="-56" r="3" fill="#8be9ff" filter="url(#gl)"/>
+  <circle cx="31" cy="-56" r="3" fill="#8be9ff" filter="url(#gl)"/>
 </g>
 </svg>
     <img id="heroImg" src="vengadores.jpg" alt="" onerror="this.remove()">
-    <h1>Porra Doomsday</h1>
+    <h1><span>Porra Doomsday</span></h1>
   </div>
   <p class="sub">Marca quién crees que muere en Avengers: Doomsday.</p>
 </header>
@@ -274,6 +314,10 @@ $("#admBtn").onclick=async()=>{
     await goHome();
   }catch(e){fail("No se pudo conectar: "+(e.message||e))}
 })();
+
+/* Ajusta el título a una sola línea aunque la fuente tarde en cargar o falle */
+function fit(){const h=$(".art h1"),t=h.firstElementChild;h.style.fontSize="";let fs=parseFloat(getComputedStyle(h).fontSize);while(t.offsetWidth>h.clientWidth-24&&fs>16){fs--;h.style.fontSize=fs+"px"}}
+fit();window.addEventListener("resize",fit);if(document.fonts)document.fonts.ready.then(fit);
 </script>
 </body>
 </html>
